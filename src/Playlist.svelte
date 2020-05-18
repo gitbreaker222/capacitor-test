@@ -17,7 +17,7 @@
 		QUEUE,
 		PREV_QUEUE,
 		REMAINING,
-	} from './playerStore.js'
+	} from './store/playerStore.js'
 	import { send, receive } from './utils.js'
 	import { filterListByName, addType } from './utils.js'
 	
@@ -84,11 +84,11 @@
 			<span class="spacer"></span>
 			{#if song.type === PLAYED}
 			<button on:click="{e => queueSong(song, previous)}">
-				¶+
+				ï¿½+
 			</button> 
 			{:else if song.type === CURRENT}
 			<button on:click="{handlePlayPause}">
-				{#if isPaused}¶{:else}ø{/if}
+				{#if isPaused}ï¿½{:else}ï¿½{/if}
 			</button> 
 			{:else if song.type === QUEUE}
 			<button on:click="{e => resetSong(song, next)}">
@@ -100,7 +100,7 @@
 			</button> 
 			{:else if song.type === REMAINING}
 			<button on:click="{e => queueSong(song, remaining)}">
-				¶+
+				ï¿½+
 			</button> 
 			{/if}
 		</li>
@@ -147,7 +147,7 @@
     text-align: center;
 	}
 	.CURRENT .status-icon:before {
-		content: '¶';
+		content: 'ï¿½';
 	}
 	.PLAYED .status-icon:before,
 	.QUEUE .status-icon:before,
@@ -155,7 +155,7 @@
 		content: '+';
 	}
 	.PLAYED .status-icon:before {
-		content: 'ª';
+		content: 'ï¿½';
 	}
 	.PREV_QUEUE .status-icon:before {
 		content: '#';
@@ -181,7 +181,7 @@
 			</button> 
 			{:else if song.type === CURRENT}
 			<button on:click="{e => (e)}">
-				{#if isPaused}¶{:else}II{/if}
+				{#if isPaused}ï¿½{:else}II{/if}
 			</button> 
 			{:else if song.type === QUEUE}
 			<button on:click="{e => resetSong(song, next)}">

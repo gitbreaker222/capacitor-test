@@ -8,10 +8,10 @@
 		playNext,
 		toggleRandom,
 		setFilterText,
-	} from './playerStore.js'
+	} from './store/playerStore.js'
 	import Playlist from './Playlist.svelte'
 	import { debounce, sortByIndexId } from './utils.js'
-	
+
 	// constants / variables / state
 	let audio	
 	$: paused = $playerStore.paused
@@ -52,8 +52,8 @@
 </svelte:head> 
 
 <div class="controls" style="display: normal">
-	<button on:click={playPrev}><i>ê</i> prev</button>
-	<button on:click={playNext}>next <i>{isRandom ? '=':'é'}</i> </button>
+	<button on:click={playPrev}><i>ï¿½</i> prev</button>
+	<button on:click={playNext}>next <i>{isRandom ? '=':'ï¿½'}</i> </button>
 	<label class="button">
 		<input type="checkbox"
 					 checked={isRandom}
