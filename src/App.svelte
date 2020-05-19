@@ -10,6 +10,7 @@
 		setFilterText,
 	} from './store/playerStore.js'
 	import Playlist from './Playlist.svelte'
+	import Icon from './Icon.svelte'
 	import { debounce, sortByIndexId } from './utils.js'
 
 	// constants / variables / state
@@ -52,14 +53,25 @@
 </svelte:head> 
 
 <div class="controls" style="display: normal">
-	<button on:click={playPrev}><i>�</i> prev</button>
-	<button on:click={playNext}>next <i>{isRandom ? '=':'�'}</i> </button>
+	<button on:click={playPrev}>
+		<Icon name="last track button"></Icon>
+		&nbsp;prev
+	</button>
+	<button on:click={playNext}>
+		next&nbsp;
+		{#if (isRandom)}
+		<Icon name="shuffle tracks button"></Icon>
+		{:else}
+		<Icon name="next track button"></Icon>
+		{/if}
+	</button>
 	<label class="button">
 		<input type="checkbox"
 					 checked={isRandom}
 					 on:click={toggleRandom}
-					 >
-		<i>=</i>
+		>
+		&nbsp;
+		<Icon name="shuffle tracks button"></Icon>
 	</label>
 	<input class="search"
 				 type="text"
@@ -86,14 +98,16 @@
 		display: flex;
 		flex-flow: column-reverse nowrap;
 	}
-	:global(html ul, html li, html button) {margin: 0}
-	:global(html button, .button) {padding: 0 1.5rem}
-	:global(html i) {
-		font-style: normal;
-		font-size: 1.8rem;
-		font-weight: normal;
+	:global(
+		html ul,
+		html li,
+		html button,
+		html [type=checkbox]
+		) {
+		margin: 0
 	}
-	button {
+	:global(html button, .button) {padding: 0 1.5rem}
+	button, .button {
 		display: inline-flex;
 		align-items: center;
 	}

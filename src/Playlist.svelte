@@ -5,6 +5,7 @@
 	import { fade } from 'svelte/transition';
 	//import VirtualList from '@sveltejs/svelte-virtual-list';
 	import VirtualList from './VirtualList.svelte'
+	import Icon from './Icon.svelte'
 	import {
 		playerStore,
 		playPause, 
@@ -78,31 +79,50 @@
 		<li class="song {song.type}"
 				on:dblclick="{e => handleDblClick(e, song)}"
 				>
-			<span class="status-icon"></span>
+			<span class="status-icon">
+				{#if song.type === PLAYED}
+				<Icon name="stop button"></Icon>
+				{:else if song.type === CURRENT}
+				<Icon name="play"></Icon>
+				{:else if song.type === QUEUE}
+				<Icon name="plus"></Icon>
+				{:else if song.type === PREV_QUEUE}
+				<Icon name="stop button"></Icon>
+				{/if}
+			</span>
+
 			<span class="spacer"></span>
 			<span class="name">{song.name}</span>
 			<span class="spacer"></span>
+
 			{#if song.type === PLAYED}
 			<button on:click="{e => queueSong(song, previous)}">
-				�+
+				<Icon name="play"></Icon>
+				<Icon name="plus"></Icon>
 			</button> 
 			{:else if song.type === CURRENT}
 			<button on:click="{handlePlayPause}">
-				{#if isPaused}�{:else}�{/if}
+				{#if isPaused}
+				<Icon name="play"></Icon>
+				{:else}
+				<Icon name="pause button"></Icon>
+				{/if}
 			</button> 
 			{:else if song.type === QUEUE}
 			<button on:click="{e => resetSong(song, next)}">
-				5
+				<Icon name="right arrow curving down"></Icon>
 			</button> 
 			{:else if song.type === PREV_QUEUE}
 			<button on:click="{e => resetSong(song, nextPrev)}">
-				5
+				<Icon name="right arrow curving down"></Icon>
 			</button> 
 			{:else if song.type === REMAINING}
 			<button on:click="{e => queueSong(song, remaining)}">
-				�+
+				<Icon name="play"></Icon>
+				<Icon name="plus"></Icon>
 			</button> 
 			{/if}
+
 		</li>
 	</VirtualList>
 </ul>
@@ -136,29 +156,23 @@
 	li .name {
 		flex: 1;
 	}
-	
-	.CURRENT {
-		-border-top: 3px solid;
-		font-weight: bold;
+	li button {
+		display: inline-flex;
+		align-items: center;
 	}
-	
+
+	li .status-icon :global(.Icon) {
+		width: .8em;
+		height: .8em;
+	}
 	.status-icon {
 		min-width: 1.2em;
     text-align: center;
 	}
-	.CURRENT .status-icon:before {
-		content: '�';
-	}
-	.PLAYED .status-icon:before,
-	.QUEUE .status-icon:before,
-	.PREV_QUEUE .status-icon:before {
-		content: '+';
-	}
-	.PLAYED .status-icon:before {
-		content: '�';
-	}
-	.PREV_QUEUE .status-icon:before {
-		content: '#';
+	
+	.CURRENT {
+		-border-top: 3px solid;
+		font-weight: bold;
 	}
 </style>
 
