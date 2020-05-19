@@ -3,7 +3,7 @@
   "appName": "svelte-app",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www",
+  "webDir": "public",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
