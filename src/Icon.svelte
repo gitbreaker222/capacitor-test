@@ -1,6 +1,7 @@
 <script>
   let className = ''
   export { className as class }
+  export let invert = false
   export let name
 
   // setup icon list
@@ -26,34 +27,36 @@
   }
 </script>
 
-
+<!-- mask technique not performant enought on scroll
 <i
   class={"Icon " + className}
   style="--src: url({src})"
   >
   <img src="{src}" alt="{name} icon">
 </i>
-
+-->
+<i class={"Icon " + className}>
+  <img
+    src="{src}"
+    alt="{name} icon"
+    class:invert
+    >
+</i>
 
 <style>
   .Icon {
     width: 1.6em;
     height: 1.6em;
-    background: currentColor;
     display: inline-flex;
     align-items: center;
     
+    /*
+    background: currentColor;
     mask: var(--src);
     -webkit-mask: var(--src);
+    */
   }
-  @supports (mask: url("")) {
-    img {
-      display: none;
-    }
-  }
-  @supports not(mask: url("")) {
-    img {
-      display: inline-block;
-    }
+  img.invert {
+    filter: invert();
   }
 </style>

@@ -54,15 +54,15 @@
 
 <div class="controls" style="display: normal">
 	<button on:click={playPrev}>
-		<Icon name="last track button"></Icon>
+		<Icon name="last track button" invert class="big"></Icon>
 		&nbsp;prev
 	</button>
 	<button on:click={playNext}>
 		next&nbsp;
 		{#if (isRandom)}
-		<Icon name="shuffle tracks button"></Icon>
+		<Icon name="shuffle tracks button" invert></Icon>
 		{:else}
-		<Icon name="next track button"></Icon>
+		<Icon name="next track button" invert></Icon>
 		{/if}
 	</button>
 	<label class="button">
@@ -71,7 +71,7 @@
 					 on:click={toggleRandom}
 		>
 		&nbsp;
-		<Icon name="shuffle tracks button"></Icon>
+		<Icon name="shuffle tracks button" invert></Icon>
 	</label>
 	<input class="search"
 				 type="text"
@@ -128,6 +128,9 @@
 	.controls .info {
 		flex: 1 0 100%;
 		font-size: 11px;
+	}
+	.controls :global(.Icon) {
+		font-size: 1.5em;
 	}
 	audio {
 		width: 100%;

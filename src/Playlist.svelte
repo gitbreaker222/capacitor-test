@@ -1,6 +1,6 @@
 
 <script>
-	import { onMount, afterUpdate, tick } from 'svelte';
+	import { onMount, beforeUpdate, afterUpdate, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
 	//import VirtualList from '@sveltejs/svelte-virtual-list';
@@ -45,24 +45,24 @@
 	], filterText)
 	
 	function scrollToCurrent () {
-		const filterRemoved = !filterText
-		if (autoscroll || filterRemoved) {
-			let index = completeList.indexOf(current)
-			if (index > 0) index -= 1 //move current a bit to center
-			scrollToIndex(index); 
-		}
+		let index = completeList.indexOf(current)
+		if (index > 0) index -= 1 //move current a bit to center
+		scrollToIndex(index);
+		autoscroll = false
 	}
 	
-	// Event handler
+	/* Event handler
 	function handlePlay(event, song) {
 		play(song)
-		autoscroll = true
-		window.getSelection().removeAllRanges()
 		//audio.play()
 		// TODO audio.autoplay = true
-	}
+	}*/
 	
-	function handleDblClick (e, song) {jumpTo(song)}
+	function handleDblClick (e, song) {
+		jumpTo(song)
+		autoscroll = true
+		window.getSelection().removeAllRanges()
+	}
 	
 	function handlePlayPause (event) {
 		playPause()
@@ -70,7 +70,15 @@
 	
 	// Life cycle
 	afterUpdate(function(x) {
-		scrollToCurrent()
+		//autoscroll = true
+		// not if filter is active
+		// not if settings change
+		if (!filterText && autoscroll) {
+			// if a song begins to play
+			// ... clear filter
+
+			scrollToCurrent()
+		}
 	})
 </script>
 
@@ -97,29 +105,29 @@
 
 			{#if song.type === PLAYED}
 			<button on:click="{e => queueSong(song, previous)}">
-				<Icon name="play"></Icon>
-				<Icon name="plus"></Icon>
+				<Icon name="plus" invert></Icon>
+				<Icon name="play" invert></Icon>
 			</button> 
 			{:else if song.type === CURRENT}
 			<button on:click="{handlePlayPause}">
 				{#if isPaused}
-				<Icon name="play"></Icon>
+				<Icon name="play" invert></Icon>
 				{:else}
-				<Icon name="pause button"></Icon>
+				<Icon name="pause button" invert></Icon>
 				{/if}
 			</button> 
 			{:else if song.type === QUEUE}
 			<button on:click="{e => resetSong(song, next)}">
-				<Icon name="right arrow curving down"></Icon>
+				<Icon name="right arrow curving down" invert></Icon>
 			</button> 
 			{:else if song.type === PREV_QUEUE}
 			<button on:click="{e => resetSong(song, nextPrev)}">
-				<Icon name="right arrow curving down"></Icon>
+				<Icon name="right arrow curving down" invert></Icon>
 			</button> 
 			{:else if song.type === REMAINING}
 			<button on:click="{e => queueSong(song, remaining)}">
-				<Icon name="play"></Icon>
-				<Icon name="plus"></Icon>
+				<Icon name="plus" invert></Icon>
+				<Icon name="play" invert></Icon>
 			</button> 
 			{/if}
 
@@ -161,10 +169,11 @@
 		align-items: center;
 	}
 
-	li .status-icon :global(.Icon) {
-		width: .8em;
-		height: .8em;
+	li button :global(.Icon) {
+		font-size: 1.5em;
 	}
+
+	
 	.status-icon {
 		min-width: 1.2em;
     text-align: center;
