@@ -1,4 +1,4 @@
-
+<!--svelte:options immutable={true} /-->
 <script>
 	import { onMount, beforeUpdate, afterUpdate, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -44,6 +44,11 @@
 		...remaining.map(i => addType(i, REMAINING)),
 	], filterText)
 	
+	$: {
+		autoscroll = current && !!current.id
+	}
+
+	// Methods
 	function scrollToCurrent () {
 		let index = completeList.indexOf(current)
 		if (index > 0) index -= 1 //move current a bit to center
@@ -51,16 +56,8 @@
 		autoscroll = false
 	}
 	
-	/* Event handler
-	function handlePlay(event, song) {
-		play(song)
-		//audio.play()
-		// TODO audio.autoplay = true
-	}*/
-	
-	function handleDblClick (e, song) {
+	function handleDblClick (event, song) {
 		jumpTo(song)
-		autoscroll = true
 		window.getSelection().removeAllRanges()
 	}
 	
@@ -69,14 +66,8 @@
 	}
 	
 	// Life cycle
-	afterUpdate(function(x) {
-		//autoscroll = true
-		// not if filter is active
-		// not if settings change
+	afterUpdate(() => {
 		if (!filterText && autoscroll) {
-			// if a song begins to play
-			// ... clear filter
-
 			scrollToCurrent()
 		}
 	})
