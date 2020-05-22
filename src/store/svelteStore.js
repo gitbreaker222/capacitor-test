@@ -1,3 +1,5 @@
+/* SVELTE STORE */
+/* https://github.com/gitbreaker222/SvelteStore */
 import { writable } from "svelte/store"
 
 const settings = {
@@ -6,36 +8,36 @@ const settings = {
 }
 
 const logPrefix = [
-	'%cSvelteStore',
-	[
-		`background: #ff3e00`,
-		`border-radius: 0.5em`,
-		`color: white`,
-		`font-weight: bold`,
-		`padding: 2px 0.5em`,
-	].join(';')
+  '%cSvelteStore',
+  [
+    `background: #ff3e00`,
+    `border-radius: 0.5em`,
+    `color: white`,
+    `font-weight: bold`,
+    `padding: 2px 0.5em`,
+  ].join(';')
 ]
 
 const deepCopy = value => JSON.parse(JSON.stringify(value))
 
 const checkSpelling = (state, _state) => {
-	const correctKeys = Object.keys(state)
-	const _keys = Object.keys(_state).every(key => {
-		const match = correctKeys.indexOf(key) >= 0 
-		if (!match) {
-			console.debug(correctKeys)
-			console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
+  const correctKeys = Object.keys(state)
+  const _keys = Object.keys(_state).every(key => {
+    const match = correctKeys.indexOf(key) >= 0
+    if (!match) {
+      console.debug(correctKeys)
+      console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
 (Check debug logs for available keys)`)
-		}
-		return match
-	})
+    }
+    return match
+  })
 }
 
 const checkType = (value, newValue, name = "") => {
   const t1 = typeof value
   const t2 = typeof newValue
   if (t1 !== t2) {
-		console.log(...logPrefix)
+    console.log(...logPrefix)
     console.warn(`Type warning: ${name} Expected ${t1}, got ${t2}`)
   }
 }
@@ -49,10 +51,10 @@ const tickLog = async () => {
   const duration = .1
   const freq = 1 / duration
 
-  let osc = audioCtx.createOscillator() 
+  let osc = audioCtx.createOscillator()
   osc.type = "sawtooth"
   osc.frequency.value = freq
-  
+
   let vol = audioCtx.createGain()
   vol.gain.value = 0.02
 
@@ -78,13 +80,13 @@ const logUpdate = (state, newState, action, storeName) => {
     before: _state,
     after: _newState
   }
-	
-	console.log(...logPrefix, action || 'Unnamed action')
-	console.groupCollapsed(
-		`State changed. Open for details`
-	)
+
+  console.log(...logPrefix, action || 'Unnamed action')
+  console.groupCollapsed(
+    `State changed. Open for details`
+  )
   console.table(update)
-	console.groupEnd()
+  console.groupEnd()
   if (settings.tickLog) tickLog()
   try {
     sessionStorage.setItem(
@@ -110,7 +112,7 @@ export const useStore = (state, opts) => {
   } = opts
   const persistName = `STORE_UTILS.${name}`
   if (persist) {
-    const persistedState = persistRead(persistName)    
+    const persistedState = persistRead(persistName)
     if (persistedState) state = persistedState
     else persistWrite(persistName, state)
   }
@@ -126,7 +128,7 @@ export const useStore = (state, opts) => {
 
       function main(_state, asyncResolved = false) {
         if (settings.devEnv) {
-					checkSpelling(initialState, _state)
+          checkSpelling(initialState, _state)
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
           })

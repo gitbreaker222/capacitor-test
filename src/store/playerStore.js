@@ -1,4 +1,4 @@
-import { useStore } from "./storeUtils.js"
+import { useStore } from "./svelteStore.js"
 import { makeItem, sortByIndexId } from "../utils.js"
 import { music } from "./data.js"
 
