@@ -16,7 +16,7 @@
     "stop button": "23F9",
   }
 
-  let src = `/assets/openmoji-svg-black/${map[name]}.svg`
+  let src = `./assets/openmoji-svg-black/${map[name]}.svg`
 
   if (!map[name]) {
     console.warn(`<Icon name="${name}"> unknown name`)

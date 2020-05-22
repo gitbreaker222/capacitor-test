@@ -1,8 +1,22 @@
+# Capacitor Test quickref
+
+
+- setup normal svelte app (see README below)
+- install capacitor  
+  - `npm install --save @capacitor/core @capacitor/cli`
+- configure capacitor  
+  - `npx cap init --web-dir`  
+  - webdir is not `www` but `public`
+- `npx cap add electron` *(development in preveiew phase)*
+- `npm run build` *normal svelte build*
+- `npx cap copy`
+- `npx cap open electron`
+
+# svelte app
+
 *Looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
 
 ---
-
-# svelte app
 
 This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
 
