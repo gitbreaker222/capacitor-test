@@ -1,16 +1,28 @@
 {
-  "name": "svelte-app",
+  "name": "capacitortest",
   "version": "1.0.0",
   "description": "An Amazing Capacitor App",
   "main": "index.js",
+  "build": {
+    "appId": "net.gitbreaker222.${name}",
+    "productName": "Capacitor Test",
+    "linux": {
+      "target": "AppImage",
+      "category": "Audio",
+      "synopsis": "Music Playlist",
+      "description": "Test capacitor application builder with a Music-Playlist demo app"
+    }
+  },
   "scripts": {
-    "electron:start": "electron ./"
+    "electron:start": "electron ./",
+    "build": "electron-builder"
   },
   "dependencies": {
     "@capacitor/electron": "^2.1.0",
     "electron-is-dev": "^1.1.0"
   },
   "devDependencies": {
+    "electron-builder": "^22.6.1",
     "electron": "^8.0.0"
   },
   "keywords": [
