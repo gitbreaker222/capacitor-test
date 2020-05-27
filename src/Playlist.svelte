@@ -13,12 +13,14 @@
 		queueSong,
 		resetSong,
 		jumpTo,
+	} from './store/playerStore.js'
+	import {
 		PLAYED,
 		CURRENT,
 		QUEUE,
 		PREV_QUEUE,
 		REMAINING,
-	} from './store/playerStore.js'
+	} from './constants.js'
 	import { send, receive } from './utils.js'
 	import { filterListByName, addType } from './utils.js'
 	

@@ -1,0 +1,5 @@
+export const PLAYED = "PLAYED"
+export const CURRENT = "CURRENT"
+export const QUEUE = "QUEUE"
+export const PREV_QUEUE = "PREV_QUEUE"
+export const REMAINING = "REMAINING"

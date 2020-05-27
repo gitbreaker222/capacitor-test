@@ -1,25 +1,13 @@
 import { useStore } from "./svelteStore.js"
-import { makeItem, sortByIndexId } from "../utils.js"
+import { Playlist, sortByIndexId } from "../utils.js"
+import {
+  PLAYED,
+  CURRENT,
+  QUEUE,
+  PREV_QUEUE,
+  REMAINING
+} from '../constants.js'
 import { music } from "./data.js"
-
-// constants
-export const PLAYED = "PLAYED"
-export const CURRENT = "CURRENT"
-export const QUEUE = "QUEUE"
-export const PREV_QUEUE = "PREV_QUEUE"
-export const REMAINING = "REMAINING"
-
-//helpers
-const Playlist = function (n) {
-  if (n) {
-    const collection = []
-    for (var i = 0; i < n; i += 1) {
-      collection.push('Song ' + i)
-    }
-    return collection.map(makeItem)
-  }
-  return music.map(makeItem)
-}
 
 // State
 function State() {
@@ -33,7 +21,7 @@ function State() {
     next: [],
     nextPrev: [],
     //remaining: new Playlist(10000),
-    remaining: new Playlist(),
+    remaining: new Playlist(music),
   }
 }
 
