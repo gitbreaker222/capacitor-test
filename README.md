@@ -11,6 +11,8 @@
 - `npm run build` *normal svelte build*
 - `npx cap copy`
 - `npx cap open electron`
+- `electron-builder` *(in /electron)*
+  - config in `/electron/package.json`
 
 # svelte app
 
