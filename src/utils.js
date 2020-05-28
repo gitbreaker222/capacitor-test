@@ -63,7 +63,7 @@ export const makeItem = name => ({
 })
 
 export function addType(item, type) {
-	if (!item) return addType(makeItem(''), type)
+	if (!item) return addType(makeItem('–'), type)
 	item.type = type
 	return item
 }
