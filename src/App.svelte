@@ -48,8 +48,8 @@
 
 <svelte:head>
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/milligram/1.3.0/milligram.css">
+	<link rel="stylesheet" href="assets/css/normalize.css">
+	<link rel="stylesheet" href="assets/css/milligram.css">
 </svelte:head> 
 
 <div class="controls" style="display: normal">
