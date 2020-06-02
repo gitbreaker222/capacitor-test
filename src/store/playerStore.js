@@ -7,7 +7,7 @@ import {
   PREV_QUEUE,
   REMAINING
 } from '../constants.js'
-import { music } from "./data.js"
+import { loadMusic } from "../service/data.service.js"
 
 // State
 function State() {
@@ -21,7 +21,7 @@ function State() {
     next: [],
     nextPrev: [],
     //remaining: new Playlist(10000),
-    remaining: new Playlist(music),
+    remaining: new Playlist(loadMusic()),
   }
 }
 
