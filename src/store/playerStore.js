@@ -20,8 +20,7 @@ function State() {
     current: null,
     next: [],
     nextPrev: [],
-    //remaining: new Playlist(10000),
-    remaining: new Playlist(loadMusic()),
+    remaining: [],
   }
 }
 
@@ -56,6 +55,15 @@ const _removeFromList = (song, origin) =>
 // Actions
 export function reset() {
   return storeIn.set(new State())
+}
+
+export const load = async () => {
+  storeIn.update(async function load(state) {
+    const list = await loadMusic()
+    //const remaining = new Playlist(1000)
+    const remaining = new Playlist(list)
+    return { ...state, remaining }
+  })
 }
 
 export const playPause = (isPlay) => {

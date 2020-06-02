@@ -2,6 +2,7 @@
 	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import {
 		playerStore,
+		load,
 		playPause, 
 		play,
 		playPrev,
@@ -43,6 +44,10 @@
 		if (currentTime === duration) playNext()
 		else playPause(false)
 	}
+
+	onMount(() => {
+		load()
+	})
 	
 </script>
 
