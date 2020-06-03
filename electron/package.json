@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@capacitor/electron": "^2.1.0",
-    "electron-is-dev": "^1.1.0"
+    "bluebird": "^3.7.2",
+    "electron-is-dev": "^1.1.0",
+    "readdir-absolute": "^1.0.1"
   },
   "devDependencies": {
     "electron-builder": "^22.6.1",
