@@ -1,5 +1,5 @@
 import { Plugins } from '@capacitor/core';
-import { music } from './data.js'
+import { audioExtensions } from "../utils.js";
 
 const { Device } = Plugins;
 
@@ -14,24 +14,20 @@ const openDialog = () => {
   return dialog.showOpenDialog(mainWindow, {
     properties,
     filters: [
-      { name: 'Audio Files', extensions: ['mp3', 'ogg', 'wav', 'mp4', 'm4a', 'flac'] },
+      { name: 'Audio Files', extensions: audioExtensions },
     ]
   });
 }
 
 export const loadMusic = async () => {
   const info = await Device.getInfo();
-  console.log(info);
   const { platform } = info
 
   let source
 
   if (platform === 'web') {
-    source = await fetch('') //TODO music.json
-    //.then(response => response.json())
-    //.then(data => console.log(data))
-
-    source = music
+    const response = await fetch('assets/music.json')
+    source = await response.json()
   } else if (platform === 'electron') {
     //const { mainWindow } = require('electron').remote;
     //const isDev = require('electron-is-dev');
@@ -56,8 +52,6 @@ export const loadMusic = async () => {
       return flatted;
     }
     filePaths = filePaths.map(path => {
-      console.log('+++', fs.lstatSync(path).isDirectory());
-
       if (fs.lstatSync(path).isDirectory()) return readdir(path);
       else return Promise.resolve(path);
     });

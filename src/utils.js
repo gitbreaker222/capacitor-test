@@ -1,6 +1,8 @@
 import { quintOut } from 'svelte/easing';
 import { crossfade } from 'svelte/transition';
 
+export const audioExtensions = ['mp3', 'ogg', 'wav', 'mp4', 'm4a', 'flac']
+
 export const [send, receive] = crossfade({
 	duration: (d) => { console.log('#', d); return Math.sqrt(d * 200) },
 
@@ -53,17 +55,52 @@ export function debounce(func, timeout) {
 	};
 }
 
+const isLink = (string) => {
+	return string.startsWith('http')
+}
+
+const extractFilename = (path = '') => {
+	/**
+	 * from "/path/to/file.ogg"
+	 * to "file"
+	 */
+	const regex = /(?!\/)[^/]+(?=\.)/g
+	const nameResults = path.match(regex, '')
+
+	if (nameResults) return nameResults[0]
+	else return '–'
+}
+
 let id = 0
-export const makeItem = name => ({
-	id: id++,
-	name,
-	src: id % 2
-		? "https://sveltejs.github.io/assets/music/strauss.mp3"
-		: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Creative_Commons/Dead_Combo/CC_Affiliates_Mixtape_1/Dead_Combo_-_01_-_Povo_Que_Cas_Descalo.mp3"
-})
+export const makeItem = (path = '') => {
+	const item = {
+		id: id++,
+		name: '',
+		src: '',
+	}
+
+	if (isLink(path)) {
+		item.name = path
+		item.src = path
+	} else {
+		item.name = extractFilename(path)
+		item.src = encodeURIComponent(path)
+	}
+
+	// dev
+	if (path.startsWith('./')) {
+		item.src = id % 2
+			? encodeURIComponent("assets/music/strauss.mp3")
+			: encodeURIComponent("assets/music/Dead Combo - CC Affiliates Mixtape #1 - 01 - Povo Que Caís Descalço.mp3")
+	}
+
+	if (!isLink(path)) encodeURIComponent(path)
+
+	return item
+}
 
 export function addType(item, type) {
-	if (!item) return addType(makeItem('–'), type)
+	if (!item) return addType(makeItem(), type)
 	item.type = type
 	return item
 }
@@ -71,7 +108,7 @@ export function addType(item, type) {
 export const Playlist = function (source) {
 	if (typeof source === 'number') {
 		const collection = []
-		for (var i = 0; i < n; i += 1) {
+		for (var i = 0; i < source; i += 1) {
 			collection.push('Song ' + i)
 		}
 		return collection.map(makeItem)
