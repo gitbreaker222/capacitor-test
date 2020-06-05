@@ -90,7 +90,7 @@ export const makeItem = (path = '') => {
 	// dev
 	if (path.startsWith('./')) {
 		item.src = id % 2
-			? encodeURIComponent("assets/music/strauss.mp3")
+			? encodeURIComponent("assets/music/Johann Strauss - Donau Walzer (performed by European Archive).mp3")
 			: encodeURIComponent("assets/music/Dead Combo - CC Affiliates Mixtape #1 - 01 - Povo Que Caís Descalço.mp3")
 	}
 

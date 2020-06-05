@@ -3,6 +3,7 @@
 	import {
 		playerStore,
 		load,
+		setPaused,
 		playPause, 
 		play,
 		playPrev,
@@ -34,15 +35,27 @@
 	}, 700)
 	
 	const handlePlay = () => {
-		playPause(true)
+		setPaused(false)
 	}
+
 	const handlePause = (event) => {
 		const {
 			currentTime,
 			duration
 		} = event.target
-		if (currentTime === duration) playNext()
-		else playPause(false)
+
+		if (currentTime === duration) {
+			console.log('song ended at', duration);
+			
+			playNext()
+		}
+		else setPaused(true)
+	}
+
+	const handleError = (error) => {
+		console.error(error)
+		throw new Error('player error')
+		//setPaused(true)
 	}
 
 	onMount(() => {
