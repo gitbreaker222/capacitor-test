@@ -56,7 +56,7 @@ const tickLog = async () => {
   osc.frequency.value = freq
 
   let vol = audioCtx.createGain()
-  vol.gain.value = 0.02
+  vol.gain.value = 0.05
 
   osc.connect(vol)
   vol.connect(audioCtx.destination)
@@ -121,7 +121,7 @@ export const useStore = (state, opts) => {
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
-  const interceptUpdate = callback => {
+  const interceptUpdate = (actionName, callback) => {
     let callbackResult
     update(state => {
       callbackResult = callback(state)
@@ -132,7 +132,7 @@ export const useStore = (state, opts) => {
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
           })
-          logUpdate(state, _state, callback.name, name)
+          logUpdate(state, _state, actionName, name)
         }
 
         currentState = { ..._state }

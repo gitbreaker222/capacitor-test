@@ -30,12 +30,12 @@ export const playerStore = storeOut
 
 // Private Functions
 const _resetList = () =>
-  storeIn.update(function _resetList(state) {
+  storeIn.update('_resetList', state => {
     return { ...state, previous: [], remaining: new Playlist() }
   })
 
 const _removeFromList = (song, origin) =>
-  storeIn.update(function _removeFromList(state) {
+  storeIn.update('_removeFromList', state => {
     let { previous, next, nextPrev, remaining } = state
 
     const filteredList = origin.filter(i => i !== song)
@@ -58,7 +58,7 @@ export function reset() {
 }
 
 export const load = async () => {
-  storeIn.update(async function load(state) {
+  storeIn.update('load', async state => {
     const list = await loadMusic()
     //const remaining = new Playlist(1000)
     const remaining = new Playlist(list)
@@ -66,23 +66,26 @@ export const load = async () => {
   })
 }
 
-export const playPause = (isPlay) => {
-  return storeIn.update(function playPause(state) {
+export function setPaused(value = true) {
+  return storeIn.update('setPaused', state => {
+    return { ...state, paused: value }
+  })
+}
+
+export function playPause() {
+  storeIn.update(state => {
     let { paused } = state
 
-    if (isPlay != null) paused = !isPlay
-    else paused = !paused
-
-    return { ...state, paused }
-  })
+    return { ...state, paused: !paused }
+  }, this.name)
 }
 
 export const play = (song, prev = false) => {
   let { paused } = storeOut.get()
 
-  if (!paused) playPause()
+  if (!paused) setPaused(true)
 
-  return storeIn.update(function play(state) {
+  return storeIn.update('play', state => {
     let { current, previous, nextPrev, paused } = state
 
     if (current && !prev) previous = previous.concat(current)
@@ -103,7 +106,7 @@ export const playPrev = () => {
     play(lastItem, { prev: true })
   }
 
-  return storeIn.update(function playPrevUpdateList(state) {
+  return storeIn.update('playPrevUpdateList', state => {
     return { ...state, previous }
   })
 }
@@ -132,19 +135,19 @@ export const playNext = () => {
     play(nextSong) //if repeat
   }
 
-  storeIn.update(function playNextUpdateList(state) {
+  storeIn.update('playNextUpdateList', state => {
     return { ...state, isRandom, next, nextPrev, remaining }
   })
 }
 
 export const toggleRandom = () =>
-  storeIn.update(function toggleRandom(state) {
+  storeIn.update('toggleRandom', state => {
     let { isRandom } = state
     return { ...state, isRandom: !isRandom }
   })
 
 export const setFilterText = (filterText) => {
-  storeIn.update(function setFilterText(state) {
+  storeIn.update('setFilterText', state => {
     return { ...state, filterText }
   })
 }
@@ -152,7 +155,7 @@ export const setFilterText = (filterText) => {
 export const resetSong = (song, origin) => {
   _removeFromList(song, origin)
 
-  storeIn.update(function resetSong(state) {
+  storeIn.update('resetSong', state => {
     let { remaining } = state
 
     remaining = [...remaining]
@@ -166,7 +169,7 @@ export const resetSong = (song, origin) => {
 export const queueSong = (song, origin) => {
   _removeFromList(song, origin)
 
-  return storeIn.update(function queueSong(state) {
+  return storeIn.update('queueSong', state => {
     let { next } = state
 
     next = [...next]
@@ -193,7 +196,7 @@ export const jumpTo = (song) => {
       index = _previous.indexOf(song)
       _removeFromList(song, _previous)
       play(song)
-      return storeIn.update(function jumpToPrevious(state) {
+      return storeIn.update('jumpToPrevious', state => {
         let { previous, nextPrev } = state
         previous = [...previous]
         const songsBetweenSelectedAndCurrent = previous.splice(index)
@@ -208,7 +211,7 @@ export const jumpTo = (song) => {
     case PREV_QUEUE:
       index = _nextPrev.indexOf(song)
       _removeFromList(song, _nextPrev)
-      storeIn.update(function jumpToNextPrev(state) {
+      storeIn.update('jumpToNextPrev', state => {
         let { previous, nextPrev } = state
 
         nextPrev = [...nextPrev]
@@ -222,7 +225,7 @@ export const jumpTo = (song) => {
       index = _remaining.indexOf(song)
       _removeFromList(song, _remaining)
       play(song)
-      return storeIn.update(function jumpToRemaining(state) {
+      return storeIn.update('jumpToRemaining', state => {
         let { isRandom, remaining, previous, nextPrev } = state
 
         if (!isRandom) {
