@@ -4,7 +4,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --host 192.168.0.102",
+    "start": "sirv public",
+    "start:lan": "--host 192.168.0.102",
     "copy": "npx cap copy",
     "dev:electron": "npx cap copy && npx cap open electron"
   },
