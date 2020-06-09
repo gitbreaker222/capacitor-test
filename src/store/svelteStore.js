@@ -1,12 +1,9 @@
-/* SVELTE STORE */
-/* https://github.com/gitbreaker222/SvelteStore */
 import { writable } from "svelte/store"
 
-// TODO put settings on window, so they can always be changed via terminal ?
 const settings = {
   devEnv: true, // TODO get from build parameter
   tickLog: true,
-  loopGuard: true, //TODO use flag
+  loopGuard: true,
 }
 
 const logPrefix = [
@@ -24,12 +21,12 @@ const deepCopy = value => JSON.parse(JSON.stringify(value))
 
 const checkSpelling = (state, _state) => {
   const correctKeys = Object.keys(state)
-  const _keys = Object.keys(_state).every(key => {
+  Object.keys(_state).every(key => {
     const match = correctKeys.indexOf(key) >= 0
     if (!match) {
-      console.debug(correctKeys)
-      console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
+      console.warn(...logPrefix, `Spelling seems incorrect for "${key}"
 (Check debug logs for available keys)`)
+      console.debug(correctKeys)
     }
     return match
   })
@@ -39,8 +36,7 @@ const checkType = (value, newValue, name = "") => {
   const t1 = typeof value
   const t2 = typeof newValue
   if (t1 !== t2) {
-    console.log(...logPrefix)
-    console.warn(`Type warning: ${name} Expected ${t1}, got ${t2}`)
+    console.warn(...logPrefix, `Type warning '${name}': Expected ${t1}, got ${t2}`)
   }
 }
 
@@ -83,9 +79,9 @@ const logUpdate = (state, newState, action, storeName) => {
     after: _newState
   }
 
-  console.log(...logPrefix, action || 'Unnamed action')
+  console.log(...logPrefix, 'State changed')
   console.groupCollapsed(
-    `State changed. Open for details`
+    `${action || 'Unnamed action'}`
   )
   console.table(update)
   console.groupEnd()
@@ -96,7 +92,7 @@ const logUpdate = (state, newState, action, storeName) => {
       JSON.stringify(newState)
     )
   } catch (e) {
-    console.debug("sessionStorage needs Same-Origin-Policy to work")
+    console.warn(...logPrefix, "sessionStorage needs Same-Origin-Policy to work")
   }
 }
 
@@ -144,11 +140,15 @@ const loopGuard = {
       expirationTime = blockFlag
 
       console.error(...logPrefix, 'Infinite loop detected:', action)
-      throw new Error(`
-      Action has been called repeatedly
-      with an interval of less than ${repeatDelay}
-      and within a max time frame of ${totalDelay}
+      const isConfirmed = confirm(`The action "${action}" seems to repeat infinitley.
+      Do you want to reload the window?
       `)
+      if (isConfirmed) {
+        window.location.reload()
+        const msg = `
+Action has been called repeatedly with an interval of less than ${repeatDelay} ms and within a max time frame of ${totalDelay} ms`
+        throw new Error(msg)
+      }
     }
     this.index.set(action, expirationTime)
     forgetAfter(repeatDelay, expirationTime)
@@ -156,7 +156,6 @@ const loopGuard = {
     return isExpired
   }
 }
-
 
 export const useStore = (state, opts) => {
   const {
@@ -169,20 +168,16 @@ export const useStore = (state, opts) => {
     if (persistedState) state = persistedState
     else persistWrite(persistName, state)
   }
-  console.info(name, state)
+  console.info(...logPrefix, name, state)
   const initialState = settings.devEnv ? deepCopy(state) : null
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
   const interceptUpdate = (actionName, callback) => {
     let callbackResult
+
     update(state => {
-      try {
-        if (settings.loopGuard) loopGuard.register(actionName)
-      } catch (error) {
-        console.error(error);
-        return state
-      }
+      if (settings.loopGuard && loopGuard.register(actionName)) return state
 
       callbackResult = callback(state)
 
@@ -210,8 +205,8 @@ export const useStore = (state, opts) => {
     return callbackResult
   }
 
-  const interceptSet = (newState) => {
-    interceptUpdate(() => newState)
+  const interceptSet = (actionName, newState) => {
+    interceptUpdate(actionName, () => newState)
   }
 
   const get = () => currentState

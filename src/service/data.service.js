@@ -3,6 +3,23 @@ import { audioExtensions } from "../utils.js";
 
 const { Device } = Plugins;
 
+const flatten = array => {
+  /**
+   * in [ 1, [2], "3", [4, [5], {id: 6, x: [7]}] ]
+   * out [ 1, 2, "3" ,4 ,5 , {id: 6, x: [7]}]
+   */
+  let flatted = [];
+  for (let i = 0; i < array.length; i++) {
+    const currentItem = array[i]
+
+    if (Array.isArray(currentItem)) {
+      flatted = flatted.concat(flatten(currentItem));
+    }
+    else flatted.push(currentItem);
+  }
+  return flatted;
+}
+
 const openDialog = () => {
   const { mainWindow, dialog } = require('electron').remote;
 
@@ -42,19 +59,12 @@ export const loadMusic = async () => {
     //filePaths ["/home/lexon222/Musik"]
 
     if (!filePaths) return;
-    const flatten = arr => {
-      let flatted = [];
-      for (let i = 0; i < arr.length; i++) {
-        if (Array.isArray(arr[i])) {
-          flatted = flatted.concat(flatten(arr[i]));
-        } else flatted.push(arr[i]);
-      }
-      return flatted;
-    }
+
     filePaths = filePaths.map(path => {
       if (fs.lstatSync(path).isDirectory()) return readdir(path);
       else return Promise.resolve(path);
     });
+
     console.log(filePaths);
 
     await Promise.all(filePaths).then(values => {
