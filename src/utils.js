@@ -1,12 +1,15 @@
-import { quintOut } from 'svelte/easing';
+//import { quintOut } from 'svelte/easing';
 import { crossfade } from 'svelte/transition';
+import { settingsStore } from "./store/settingsStore.js";
+
+const { platform } = settingsStore.get()
 
 export const audioExtensions = ['mp3', 'ogg', 'wav', 'mp4', 'm4a', 'flac']
 
 export const [send, receive] = crossfade({
 	duration: (d) => { console.log('#', d); return Math.sqrt(d * 200) },
 
-	fallback(node, params) {
+	/*fallback(node) {
 		const style = getComputedStyle(node);
 		const transform = style.transform === 'none' ? '' : style.transform;
 
@@ -15,7 +18,7 @@ export const [send, receive] = crossfade({
 			easing: quintOut,
 			css: t => `opacity: ${t}`
 		};
-	}
+	}*/
 });
 
 export const sortByIndexId = function (a, b) {
@@ -55,7 +58,7 @@ export function debounce(func, timeout) {
 	};
 }
 
-const isLink = (string) => {
+const isWebLink = (string) => {
 	return string.startsWith('http')
 }
 
@@ -79,12 +82,24 @@ export const makeItem = (path = '') => {
 		src: '',
 	}
 
-	if (isLink(path)) {
+	if (isWebLink(path)) {
 		item.name = path
 		item.src = path
 	} else {
 		item.name = extractFilename(path)
-		item.src = encodeURIComponent(path)
+
+		switch (platform) {
+			case 'web':
+				item.src = encodeURIComponent(path)
+				break;
+			case 'electron':
+				item.src = path.split('/').map(encodeURIComponent).join('/')
+				break;
+			default:
+				console.error('unhandled case:', platform)
+				item.src = path
+				break;
+		}
 	}
 
 	// dev
@@ -93,8 +108,6 @@ export const makeItem = (path = '') => {
 			? encodeURIComponent("assets/music/Johann Strauss - Donau Walzer (performed by European Archive).mp3")
 			: encodeURIComponent("assets/music/Dead Combo - CC Affiliates Mixtape #1 - 01 - Povo Que Caís Descalço.mp3")
 	}
-
-	if (!isLink(path)) encodeURIComponent(path)
 
 	return item
 }

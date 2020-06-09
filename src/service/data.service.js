@@ -1,7 +1,5 @@
-import { Plugins } from '@capacitor/core';
-import { audioExtensions } from "../utils.js";
-
-const { Device } = Plugins;
+import { settingsStore } from "../store/settingsStore.js";
+//import { audioExtensions } from "../utils.js";
 
 const flatten = array => {
   /**
@@ -30,21 +28,20 @@ const openDialog = () => {
 
   return dialog.showOpenDialog(mainWindow, {
     properties,
-    filters: [
-      { name: 'Audio Files', extensions: audioExtensions },
-    ]
+    // filters: [
+    //   { name: 'Audio Files', extensions: audioExtensions },
+    // ]
   });
 }
 
 export const loadMusic = async () => {
-  const info = await Device.getInfo();
-  const { platform } = info
+  const { platform } = settingsStore.get()
 
-  let source
+  let fileList
 
   if (platform === 'web') {
     const response = await fetch('assets/music.json')
-    source = await response.json()
+    fileList = await response.json()
   } else if (platform === 'electron') {
     //const { mainWindow } = require('electron').remote;
     //const isDev = require('electron-is-dev');
@@ -54,42 +51,40 @@ export const loadMusic = async () => {
     const readdirAboslute = require('readdir-absolute');
     const readdir = promisify(readdirAboslute);
 
-    const result = await openDialog()
-    let { filePaths } = result
-    //filePaths ["/home/lexon222/Musik"]
+    //const result = await openDialog()
+    //const { filePaths } = result
+    const filePaths = ["/home/lexon222/Musik"] //dev
 
     if (!filePaths) return;
 
-    filePaths = filePaths.map(path => {
+    // readContent
+    const readfilePaths = filePaths.map(path => {
+      /**
+        [
+          "/home/lexon222/Musik/Various Artists"
+          "/home/lexon222/Musik/Vvilderness"
+          "/home/lexon222/Musik/drumloopm01.m4a"
+          "/home/lexon222/Musik/drumloopm01.ogg"
+          "/home/lexon222/Musik/metal app developer (m.a.d.).mp3"
+          "/home/lexon222/Musik/metal app developer (m.a.d.).ogg"
+          "/home/lexon222/Musik/radios.xspf"
+        ]
+       */
       if (fs.lstatSync(path).isDirectory()) return readdir(path);
       else return Promise.resolve(path);
     });
 
-    console.log(filePaths);
+    console.log('readdir result', readfilePaths);
 
-    await Promise.all(filePaths).then(values => {
-      console.log('###', values);
-      /**
-       * values
-       * 
-        0: "/home/lexon222/Musik/Various Artists"
-        1: "/home/lexon222/Musik/Vvilderness"
-        2: "/home/lexon222/Musik/drumloopm01 (Kopie).ogg"
-        3: "/home/lexon222/Musik/drumloopm01.m4a"
-        4: "/home/lexon222/Musik/drumloopm01.ogg"
-        5: "/home/lexon222/Musik/metal app developer (m.a.d.).mp3"
-        6: "/home/lexon222/Musik/metal app developer (m.a.d.).ogg"
-        7: "/home/lexon222/Musik/radios.xspf"
-       */
-
-      if (values.length === 1) values[0] = [values[0]];
+    await Promise.all(readfilePaths).then(values => {
       const filteredPaths = flatten(values)
         .filter(path => /\.(mp3|ogg|wav|mp4|m4a|flac)$/.test(path));
       //mainWindow.webContents.send('files:open', filteredPaths);
-      source = filteredPaths
+      fileList = filteredPaths
     });
   }
 
-  console.log('#+#', platform, source);
-  return source
+  console.log('#+#', platform, fileList);
+
+  return fileList
 }
