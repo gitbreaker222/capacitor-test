@@ -1,21 +1,34 @@
 import { settingsStore } from "../store/settingsStore.js";
 //import { audioExtensions } from "../utils.js";
 
-const flatten = array => {
-  /**
-   * in [ 1, [2], "3", [4, [5], {id: 6, x: [7]}] ]
-   * out [ 1, 2, "3" ,4 ,5 , {id: 6, x: [7]}]
-   */
-  let flatted = [];
-  for (let i = 0; i < array.length; i++) {
-    const currentItem = array[i]
 
-    if (Array.isArray(currentItem)) {
-      flatted = flatted.concat(flatten(currentItem));
-    }
-    else flatted.push(currentItem);
+
+async function pathsToFlatFileList(filePaths = []) {
+  const fs = require('fs');
+  const { promisify } = require('bluebird');
+  const readdirAboslute = require('readdir-absolute');
+  const readdir = promisify(readdirAboslute);
+
+  const audioPattern = /\.(mp3|ogg|wav|mp4|m4a|flac)$/
+
+  async function readNextLevel(_filePaths = []) {
+
+    return _filePaths.reduce(async (currentList, path) => {
+      currentList = await currentList
+      if (fs.lstatSync(path).isDirectory()) {
+        let nextFilePaths = await readdir(path)
+        nextFilePaths = await readNextLevel(nextFilePaths)
+        currentList.splice(currentList.length - 1, 0, ...nextFilePaths)
+      } else if (audioPattern.test(path)) {
+        currentList.push(path)
+      }
+      return currentList
+    }, [])
   }
-  return flatted;
+
+  const finalList = await readNextLevel(filePaths)
+
+  return finalList
 }
 
 const openDialog = () => {
@@ -43,48 +56,13 @@ export const loadMusic = async () => {
     const response = await fetch('assets/music.json')
     fileList = await response.json()
   } else if (platform === 'electron') {
-    //const { mainWindow } = require('electron').remote;
-    //const isDev = require('electron-is-dev');
-    //const path = require('path');
-    const fs = require('fs');
-    const { promisify } = require('bluebird');
-    const readdirAboslute = require('readdir-absolute');
-    const readdir = promisify(readdirAboslute);
-
-    //const result = await openDialog()
-    //const { filePaths } = result
-    const filePaths = ["/home/lexon222/Musik"] //dev
+    const result = await openDialog()
+    const { filePaths } = result
 
     if (!filePaths) return;
 
-    // readContent
-    const readfilePaths = filePaths.map(path => {
-      /**
-        [
-          "/home/lexon222/Musik/Various Artists"
-          "/home/lexon222/Musik/Vvilderness"
-          "/home/lexon222/Musik/drumloopm01.m4a"
-          "/home/lexon222/Musik/drumloopm01.ogg"
-          "/home/lexon222/Musik/metal app developer (m.a.d.).mp3"
-          "/home/lexon222/Musik/metal app developer (m.a.d.).ogg"
-          "/home/lexon222/Musik/radios.xspf"
-        ]
-       */
-      if (fs.lstatSync(path).isDirectory()) return readdir(path);
-      else return Promise.resolve(path);
-    });
-
-    console.log('readdir result', readfilePaths);
-
-    await Promise.all(readfilePaths).then(values => {
-      const filteredPaths = flatten(values)
-        .filter(path => /\.(mp3|ogg|wav|mp4|m4a|flac)$/.test(path));
-      //mainWindow.webContents.send('files:open', filteredPaths);
-      fileList = filteredPaths
-    });
+    fileList = await pathsToFlatFileList(filePaths)
   }
-
-  console.log('#+#', platform, fileList);
 
   return fileList
 }
