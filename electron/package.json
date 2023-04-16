@@ -24,8 +24,8 @@
     "readdir-absolute": "^1.0.1"
   },
   "devDependencies": {
-    "electron-builder": "^22.6.1",
-    "electron": "^15.5.5"
+    "electron-builder": "^23.6.0",
+    "electron": "^24.1.2"
   },
   "keywords": [
     "capacitor",
