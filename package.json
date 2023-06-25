@@ -20,7 +20,7 @@
     "svelte": "^3.49.0"
   },
   "dependencies": {
-    "@capacitor/cli": "^2.1.2",
+    "@capacitor/cli": "^5.0.5",
     "@capacitor/core": "^2.1.2",
     "sirv-cli": "^0.4.4"
   }
