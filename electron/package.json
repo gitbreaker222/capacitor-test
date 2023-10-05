@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "electron-builder": "^23.6.0",
-    "electron": "^24.8.3"
+    "electron": "^24.8.5"
   },
   "keywords": [
     "capacitor",
