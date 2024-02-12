@@ -9,6 +9,7 @@
     "copy": "npx cap copy",
     "dev:electron": "npx cap copy && npx cap open electron"
   },
+  someDemoChange: "hello world"
   "devDependencies": {
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-node-resolve": "^7.0.0",
