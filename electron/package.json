@@ -24,7 +24,7 @@
     "readdir-absolute": "^1.0.1"
   },
   "devDependencies": {
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^24.13.3",
     "electron": "^24.8.5"
   },
   "keywords": [
